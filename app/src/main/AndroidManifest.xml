@@ -19,6 +19,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".Login" />
+        <activity
+            android:name=".Fragments.Dota"
+            android:label="@string/title_activity_dota"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Fragments.Cs_go"
+            android:label="@string/title_activity_cs_go"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Fragments.Lol"
+            android:label="@string/title_activity_lol"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
