@@ -38,16 +38,7 @@
                 android:drawableTint="@android:color/white"
                 android:textSize="16sp"
                 android:padding="8dp"/>
-            <TextView
-                android:id="@+id/text_date_news"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0000-00-00"
-                android:textSize="14sp"
-                android:textColor="@android:color/white"
-                android:layout_alignParentBottom="true"
-                android:padding="4dp"
-                />
+
         </RelativeLayout>
         <LinearLayout
             android:layout_weight="0.4"
