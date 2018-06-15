@@ -20,6 +20,7 @@ import com.gomar.parcial2_00011616.Fragments.Lol;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    public static Token securityToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

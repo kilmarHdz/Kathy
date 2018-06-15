@@ -25,6 +25,12 @@ public interface NewsDao {
 
     @Query("DELETE FROM table_news")
     void deleteAll();
+
+    @Query("UPDATE table_news SET favorite = :value WHERE id = :idNew ")
+    void updateFavoriteState(int value,String idNew);
+
+    @Query("SELECT * FROM table_news WHERE favorite =1")
+    LiveData<List<NewsEntity>> getFavoritesNews();
 }
 
 

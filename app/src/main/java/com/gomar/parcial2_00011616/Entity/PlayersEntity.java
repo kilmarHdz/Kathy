@@ -9,52 +9,80 @@ import android.support.annotation.NonNull;
 
 public class PlayersEntity {
 
-        @PrimaryKey
-        @NonNull
-        @ColumnInfo(name = "id")
-        private String _id;
-        @NonNull
-        @ColumnInfo(name = "name")
-        private String name;
-        @NonNull
-        @ColumnInfo(name = "game")
-        private String game;
+    @PrimaryKey
 
+    @NonNull
+    @ColumnInfo(name = "_id")
+    private String _id;
+    @NonNull
+    @ColumnInfo(name = "name")
+    private String name;
+    @NonNull
+    @ColumnInfo(name = "biografia")
+    private String biografia;
+    @NonNull
+    @ColumnInfo(name = "avatar")
+    private String avatar;
+    @NonNull
+    @ColumnInfo(name = "game")
+    private String game;
 
-        @NonNull
-        public String get_id() {
-            return _id;
-        }
+    public PlayersEntity() {
+    }
 
-        public void set_id(@NonNull String _id) {
-            this._id = _id;
-        }
+    @NonNull
+    public String get_id() {
+        return _id;
+    }
 
-        @NonNull
-        public String getName() {
-            return name;
-        }
+    public void set_id(@NonNull String _id) {
+        this._id = _id;
+    }
 
-        public void setName(@NonNull String name) {
-            this.name = name;
-        }
+    @NonNull
+    public String getName() {
+        return name;
+    }
 
+    public void setName(@NonNull String name) {
+        this.name = name;
+    }
 
-        @NonNull
-        public String getGame() {
-            return game;
-        }
+    @NonNull
+    public String getBiografia() {
+        return biografia;
+    }
 
-        public void setGame(@NonNull String game) {
-            this.game = game;
-        }
+    public void setBiografia(@NonNull String biografia) {
+        this.biografia = biografia;
+    }
 
-        @Override
-        public String toString() {
-            return "PlayersEntity{" +
-                    "id='" + _id + '\'' +
-                    ", name='" + name + '\'' +
-                    ", game='" + game + '\'' +
-                    '}';
-        }
+    @NonNull
+    public String getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(@NonNull String avatar) {
+        this.avatar = avatar;
+    }
+
+    @NonNull
+    public String getGame() {
+        return game;
+    }
+
+    public void setGame(@NonNull String game) {
+        this.game = game;
+    }
+
+    @Override
+    public String toString() {
+        return "Player{" +
+                "_id='" + _id + '\'' +
+                ", name='" + name + '\'' +
+                ", biografia='" + biografia + '\'' +
+                ", avatar='" + avatar + '\'' +
+                ", game='" + game + '\'' +
+                '}';
+    }
     }
