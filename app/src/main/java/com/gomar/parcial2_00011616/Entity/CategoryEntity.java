@@ -27,7 +27,7 @@ public class CategoryEntity {
 
     @Override
     public String toString() {
-        return "CategoryEntity{" +
+        return "CategoryGame{" +
                 "categoryName='" + categoryName + '\'' +
                 '}';
     }

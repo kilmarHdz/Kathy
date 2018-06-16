@@ -8,26 +8,26 @@ import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
 @Entity(tableName = "table_news")
-
 public class NewsEntity {
-
     @PrimaryKey
     @NonNull
-
-    @ColumnInfo(name="id")
-    private String id;
-    @ColumnInfo(name="title")
-    private String title;
-    @ColumnInfo(name="body")
-    private String body;
-    @ColumnInfo(name="game")
-    private String game;
-    @ColumnInfo(name="description")
-    private String description;
-    @ColumnInfo(name="coverImage")
+    @ColumnInfo(name = "id")
+    private String _id;
+    @ColumnInfo(name = "title")
+    private String title = "--*--";
+    @NonNull
+    @ColumnInfo(name = "cover_image")
     private String coverImage;
-    @ColumnInfo(name="created_Date")
-    private String created_Date;
+    @ColumnInfo(name = "create_date")
+    private String created_date ="-----";
+    @ColumnInfo(name = "description")
+    private String description="--*--";
+    @ColumnInfo(name = "body")
+    private String body="--*--";
+    @NonNull
+    @ColumnInfo(name = "game")
+    private String game;
+    @NonNull
     @ColumnInfo(name = "favorite")
     private int favorite=0;
 
@@ -35,17 +35,17 @@ public class NewsEntity {
     public NewsEntity(){}
 
     public NewsEntity(@NonNull String _id, String title, @NonNull String coverImage, String created_date, String description, String body, @NonNull String game) {
-        this.id = _id;
+        this._id = _id;
         this.title = title;
         this.coverImage = coverImage;
-        this.created_Date = created_date;
+        this.created_date = created_date;
         this.description = description;
         this.body = body;
         this.game = game;
     }
 
-    public void setId(@NonNull String _id) {
-        this.id = _id;
+    public void set_id(@NonNull String _id) {
+        this._id = _id;
     }
 
     public void setTitle(String title) {
@@ -56,8 +56,8 @@ public class NewsEntity {
         this.coverImage = coverImage;
     }
 
-    public void setCreated_Date(String created_date) {
-        this.created_Date = created_date;
+    public void setCreated_date(String created_date) {
+        this.created_date = created_date;
     }
 
     public void setDescription(String description) {
@@ -73,7 +73,7 @@ public class NewsEntity {
     }
 
     public String get_id() {
-        return id;
+        return _id;
     }
 
     public String getTitle() {
@@ -84,8 +84,8 @@ public class NewsEntity {
         return coverImage;
     }
 
-    public String getCreated_Date() {
-        return created_Date;
+    public String getCreated_date() {
+        return created_date;
     }
 
     public String getDescription() {
@@ -112,14 +112,13 @@ public class NewsEntity {
     @Override
     public String toString() {
         return "New{" +
-                "_id='" + id + '\'' +
+                "_id='" + _id + '\'' +
                 ", title='" + title + '\'' +
                 ", coverImage='" + coverImage + '\'' +
-                ", created_date='" + created_Date + '\'' +
+                ", created_date='" + created_date + '\'' +
                 ", description='" + description + '\'' +
                 ", body='" + body + '\'' +
                 ", game='" + game + '\'' +
                 '}';
     }
-
 }

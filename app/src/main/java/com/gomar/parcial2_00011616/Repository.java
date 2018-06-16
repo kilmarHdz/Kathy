@@ -5,19 +5,21 @@ import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.gomar.parcial2_00011616.API.GamesNewsApi;
+import com.gomar.parcial2_00011616.Activity.MainActivity;
 import com.gomar.parcial2_00011616.Entity.CategoryEntity;
-import com.gomar.parcial2_00011616.Entity.Deserializer.FavDeserializer;
-import com.gomar.parcial2_00011616.Entity.Deserializer.NewsDeserializer;
-import com.gomar.parcial2_00011616.Entity.Deserializer.PlayerDeserializer;
-import com.gomar.parcial2_00011616.Entity.Deserializer.UserDeserializer;
+import com.gomar.parcial2_00011616.API.Deserializer.FavDeserializer;
+import com.gomar.parcial2_00011616.API.Deserializer.NewsDeserializer;
+import com.gomar.parcial2_00011616.API.Deserializer.PlayerDeserializer;
+import com.gomar.parcial2_00011616.API.Deserializer.UserDeserializer;
 import com.gomar.parcial2_00011616.Entity.FavEntity;
 import com.gomar.parcial2_00011616.Entity.NewsEntity;
 import com.gomar.parcial2_00011616.Entity.PlayersEntity;
 import com.gomar.parcial2_00011616.Entity.UserEntity;
-import com.gomar.parcial2_00011616.Response.FavoriteResponse;
-import com.gomar.parcial2_00011616.Response.NewsResponse;
-import com.gomar.parcial2_00011616.Response.PlayersResponse;
-import com.gomar.parcial2_00011616.Response.UserResponse;
+import com.gomar.parcial2_00011616.API.Response.FavoriteResponse;
+import com.gomar.parcial2_00011616.API.Response.NewsResponse;
+import com.gomar.parcial2_00011616.API.Response.PlayersResponse;
+import com.gomar.parcial2_00011616.API.Response.UserResponse;
 import com.gomar.parcial2_00011616.Room.CategoryDao;
 import com.gomar.parcial2_00011616.Room.FavDao;
 import com.gomar.parcial2_00011616.Room.GameRoomDatabase;
@@ -83,11 +85,6 @@ public class Repository {
         return favoriteList;
     }
     public LiveData<UserEntity> getCurrentUser(){
-        api = getCurrentUserByRepo();
-        disposable.add(api.getCurrentUser()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(getUserLogged()));
         return currentUser;
     }
     public LiveData<List<CategoryEntity>> getAllGames(){
@@ -98,9 +95,7 @@ public class Repository {
                 .subscribeWith(getGameList()));
         return gameList;
     }
-    public LiveData<NewsEntity> getNew(String id){
-        return newDao.getNewInfo(id);
-    }
+    public LiveData<NewsEntity> getNew(String id){ return newDao.getNew(id); }
     public LiveData<List<NewsEntity>> getNewsByGame(String game){
         newList = newDao.getNewsByCategory(game);
         return newList;
@@ -110,11 +105,6 @@ public class Repository {
         return playerList;
     }
     public LiveData<List<PlayersEntity>> getAllPlayer(){
-        api = getPlayersFromAPI();
-        disposable.add(api.getAllPlayers()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(getPlayerRepoResponse()));
         return playerList;
     }
     public LiveData<List<UserEntity>> getAllUsers(){
@@ -123,24 +113,59 @@ public class Repository {
     public LiveData<List<NewsEntity>> getAllNews() {
         return newList;
     }
-    public LiveData<List<NewsEntity>> getFavoritesObjectNews(){
-        return newDao.getFavoritesNews();
+    public LiveData<List<NewsEntity>> getFavoritesObjectNews(){ return newDao.getFavoritesNews(); }
+
+    /**
+     * SETTERS
+     */
+
+    public void addFavoriteNew(String idUser,String idNew){
+        api = createAddFavRequest();
+        disposable.add(api.addFavorite(idUser,idNew)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(addFavObserver()));
     }
-
-
+    public void removeFavoriteNew(String User,String idNew){
+        api = createAddFavRequest();
+        disposable.add(api.removeFavorite(User,idNew)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(removeFavObserver()));
+    }
     public void exectInserFavorite(FavEntity fab){
         insertFavorite(fab);
     }
     /**
      * Metodos para obtener informacion de la API
      */
+    public void refreshCurrentUser(){
+        api = getCurrentUserByRepo();
+        disposable.add(api.getCurrentUser()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(getUserLogged()));
+    }
     public void refreshNews(){
-        disposable.add(api.getNewsbyRepository()
+        disposable.add(api.getNewsByRepo()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(getNewsRepoObserver()));
     }
-
+    public void refreshFavoritesListID(){
+        api = getFavoritesNoticesByRepo();
+        disposable.add(api.getFavoritesListUser()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(getFavoritesObserver()));
+    }
+    public void refreshTopPlayers(){
+        api = getPlayersFromAPI();
+        disposable.add(api.getAllPlayers()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(getPlayerRepoResponse()));
+    }
 
 
     /**
@@ -169,9 +194,12 @@ public class Repository {
     public void updateFavNewState(String value, String idNew){
         new favoritesUpdateAsyncTask(newDao).execute(value,idNew);
     }
-
     public void deleteAllFavotitesID(){
         new deleteAllFavotitesIDAsyncTask(favoriteDAO).execute();
+    }
+
+    public void deleteAllUsers(){
+        new deleteAllUsersAsyncTask(userDao).execute();
     }
 
 
@@ -188,8 +216,8 @@ public class Repository {
             this.gameDao = gameDao;
         }
         @Override
-        protected Void doInBackground(CategoryEntity... categoryGames) {
-            gameDao.insertCategory(categoryGames[0]);
+        protected Void doInBackground(CategoryEntity... CategoryEntity) {
+            gameDao.insertCategory(CategoryEntity[0]);
             return null;
         }
     }
@@ -272,6 +300,18 @@ public class Repository {
             return null;
         }
     }
+    private static class deleteAllUsersAsyncTask extends AsyncTask<Void,Void,Void>{
+        private UserDao userDao;
+        public deleteAllUsersAsyncTask(UserDao userDao){
+            this.userDao = userDao;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            userDao.deleteAllUser();
+            return null;
+        }
+    }
 
 
 
@@ -294,7 +334,7 @@ public class Repository {
                 }).build();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(GamesNewsApi.LINKEND)
+                .baseUrl(GamesNewsApi.ENDPOINT)
                 .client(client)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(gson))
@@ -309,15 +349,15 @@ public class Repository {
                 if(!news.isEmpty()){
                     for(NewsResponse notice:news){
                         NewsEntity newNotice = new NewsEntity();
-                        newNotice.setId(notice.get_id());
+                        newNotice.set_id(notice.get_id());
                         newNotice.setTitle(notice.getTitle());
                         newNotice.setDescription(notice.getDescription());
                         newNotice.setCoverImage(notice.getCoverImage());
                         newNotice.setBody(notice.getBody());
-                        newNotice.setCreated_Date(notice.getCreated_date());
                         newNotice.setGame(notice.getGame());
                         insertNews(newNotice);
                     }
+                    refreshFavoritesListID();
                 }
             }
 
@@ -346,7 +386,7 @@ public class Repository {
                 }).build();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(GamesNewsApi.LINKEND)
+                .baseUrl(GamesNewsApi.ENDPOINT)
                 .client(client)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(gson))
@@ -391,7 +431,7 @@ public class Repository {
                 }).build();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(GamesNewsApi.LINKEND)
+                .baseUrl(GamesNewsApi.ENDPOINT)
                 .client(client)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
@@ -435,7 +475,7 @@ public class Repository {
                 }).build();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(GamesNewsApi.LINKEND)
+                .baseUrl(GamesNewsApi.ENDPOINT)
                 .client(client)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(gson))
@@ -483,7 +523,7 @@ public class Repository {
                 }).build();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(GamesNewsApi.LINKEND)
+                .baseUrl(GamesNewsApi.ENDPOINT)
                 .client(client)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(gson))
@@ -521,7 +561,7 @@ public class Repository {
                 }).build();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(GamesNewsApi.LINKEND)
+                .baseUrl(GamesNewsApi.ENDPOINT)
                 .client(client)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())

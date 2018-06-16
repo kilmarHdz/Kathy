@@ -13,15 +13,17 @@ import java.util.List;
 @Dao
 public interface NewsDao {
 
-    @Query("SELECT * FROM table_news ORDER BY created_Date DESC")
+    @Query("SELECT * FROM table_news ORDER BY create_date")
     LiveData<List<NewsEntity>> getAllNews();
 
-    @Query("SELECT * FROM table_news WHERE game = :game ORDER BY created_Date DESC")
+    @Query("SELECT * FROM table_news WHERE game = :game ORDER BY create_date DESC")
     LiveData<List<NewsEntity>> getNewsByCategory(String game);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertNew(NewsEntity news);
+
     @Query("SELECT * FROM table_news WHERE id = :id")
-    LiveData<NewsEntity> getNewInfo(String id);
+    LiveData<NewsEntity> getNew(String id);
 
     @Query("DELETE FROM table_news")
     void deleteAll();
@@ -32,5 +34,3 @@ public interface NewsDao {
     @Query("SELECT * FROM table_news WHERE favorite =1")
     LiveData<List<NewsEntity>> getFavoritesNews();
 }
-
-
